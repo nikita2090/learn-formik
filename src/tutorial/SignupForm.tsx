@@ -17,6 +17,9 @@ const validationSchema = Yup.object({
         .max(20, 'Must be 20 characters or less')
         .required('Required'),
     sex: Yup.string().required('Required'),
+    pets: Yup.array()
+        .of(Yup.string().required('Required'))
+        .min(1, 'You must have min 1 pet'),
     email: Yup.string().email('Invalid email address').required('Required'),
     accept: Yup.boolean()
         .required('Required')
@@ -51,6 +54,7 @@ const SignupForm: React.FC = () => {
                 music: [],
                 jobType: '',
                 pets: ['cat'],
+                friends: [{ sex: 'male', name: 'Vasek' }],
                 email: '',
                 accept: false,
             }}
@@ -69,6 +73,7 @@ const SignupForm: React.FC = () => {
                 isSubmitting,
                 handleReset,
                 setFieldValue,
+                // errors,
             }) => (
                 <Form>
                     <Input
@@ -111,9 +116,9 @@ const SignupForm: React.FC = () => {
                         <option value="other">Other</option>
                     </Select>
 
-                    <FieldArray
-                        name="pets"
-                        render={(arrayHelpers) => (
+                    <p>Your pets:</p>
+                    <FieldArray name="pets">
+                        {(arrayHelpers) => (
                             <div>
                                 {values.pets && values.pets.length > 0 ? (
                                     values.pets.map((pet, index) => (
@@ -153,6 +158,45 @@ const SignupForm: React.FC = () => {
                                         Add a pet
                                     </button>
                                 )}
+                            </div>
+                        )}
+                    </FieldArray>
+
+                    <p>Your friends:</p>
+                    <FieldArray
+                        name="friends"
+                        render={(arrayHelpers) => (
+                            <div>
+                                {values.friends.map((friend, index) => (
+                                    <div key={index}>
+                                        <Select
+                                            fieldConfig={{
+                                                name: `friends.${index}.sex`,
+                                            }}
+                                        >
+                                            <option value="" disabled>
+                                                Select a sex
+                                            </option>
+                                            <option value="male">Male</option>
+                                            <option value="female">
+                                                Female
+                                            </option>
+                                        </Select>
+                                        <Input
+                                            fieldConfig={{
+                                                name: `friends.${index}.name`,
+                                                type: 'text',
+                                            }}
+                                        />
+                                        <hr />
+                                    </div>
+                                ))}
+                                <button
+                                    type="button"
+                                    onClick={() => arrayHelpers.push('')}
+                                >
+                                    Add more
+                                </button>
                             </div>
                         )}
                     />
