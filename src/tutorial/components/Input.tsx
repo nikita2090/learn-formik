@@ -2,7 +2,7 @@ import React from 'react';
 import { FieldHookConfig, useField } from 'formik';
 
 interface Props {
-    label: string;
+    label?: string;
     fieldConfig: FieldHookConfig<string>;
     className?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -17,7 +17,11 @@ const Field: React.FC<Props> = ({
     const [field, meta] = useField(fieldConfig);
     return (
         <div>
-            <label htmlFor={fieldConfig.id || fieldConfig.name}>{label}</label>
+            {label && (
+                <label htmlFor={fieldConfig.id || fieldConfig.name}>
+                    {label}
+                </label>
+            )}
             <input
                 className={className}
                 {...field}

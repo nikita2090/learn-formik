@@ -1,12 +1,12 @@
 export const SEX = [
     {
-        name: 'Male',
+        name: 'sex',
         value: 'male',
         label: 'Male',
         id: 0,
     },
     {
-        name: 'Female',
+        name: 'sex',
         value: 'female',
         label: 'Female',
         id: 1,

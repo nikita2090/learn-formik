@@ -1,5 +1,5 @@
 import React from 'react';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 
 import Input from './components/Input';
@@ -50,6 +50,7 @@ const SignupForm: React.FC = () => {
                 sex: 'female',
                 music: [],
                 jobType: '',
+                pets: ['cat'],
                 email: '',
                 accept: false,
             }}
@@ -61,7 +62,14 @@ const SignupForm: React.FC = () => {
                 }, 1000);
             }}
         >
-            {({ dirty, isValid, isSubmitting, handleReset, setFieldValue }) => (
+            {({
+                values,
+                dirty,
+                isValid,
+                isSubmitting,
+                handleReset,
+                setFieldValue,
+            }) => (
                 <Form>
                     <Input
                         label="First Name"
@@ -71,7 +79,6 @@ const SignupForm: React.FC = () => {
                         }}
                         onChange={(e) => handleNameChange(e, setFieldValue)}
                     />
-
                     <Input
                         label="Last Name"
                         fieldConfig={{
@@ -79,6 +86,7 @@ const SignupForm: React.FC = () => {
                             type: 'text',
                         }}
                     />
+
                     <p>What is your sex?</p>
                     {SEX.map(({ name, value, label, id }) => (
                         <Radio fieldConfig={{ name, value }} key={id}>
@@ -102,6 +110,52 @@ const SignupForm: React.FC = () => {
                         <option value="product">Product Manager</option>
                         <option value="other">Other</option>
                     </Select>
+
+                    <FieldArray
+                        name="pets"
+                        render={(arrayHelpers) => (
+                            <div>
+                                {values.pets && values.pets.length > 0 ? (
+                                    values.pets.map((pet, index) => (
+                                        <div key={index}>
+                                            <Input
+                                                fieldConfig={{
+                                                    name: `pets.${index}`,
+                                                    type: 'text',
+                                                }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.remove(index)
+                                                }
+                                            >
+                                                -
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    arrayHelpers.insert(
+                                                        index + 1,
+                                                        ''
+                                                    )
+                                                }
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => arrayHelpers.push('')}
+                                    >
+                                        Add a pet
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    />
 
                     <Input
                         label="Email"
