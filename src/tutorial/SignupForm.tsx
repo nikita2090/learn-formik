@@ -1,28 +1,44 @@
 import React from 'react';
-import { Formik, Form, FormikProps } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 
-import Input from './Input';
-import Checkbox from './Checkbox';
-import Radio from './Radio';
-import Select from './Select';
+import Input from './components/Input';
+import Checkbox from './components/Checkbox';
+import Radio from './components/Radio';
+import Select from './components/Select';
 
-interface IForm {
-    firstName: string;
-    lastName: string;
-    sex: string;
-    music: never[];
-    jobType: string;
-    email: string;
-    accept: boolean;
-}
+import { MUSIC_TYPES, SEX } from './constants';
+
+const validationSchema = Yup.object({
+    firstName: Yup.string()
+        .max(15, 'Must be 15 characters or less')
+        .required('Required'),
+    lastName: Yup.string()
+        .max(20, 'Must be 20 characters or less')
+        .required('Required'),
+    sex: Yup.string().required('Required'),
+    email: Yup.string().email('Invalid email address').required('Required'),
+    accept: Yup.boolean()
+        .required('Required')
+        .oneOf([true], 'You must accept the terms and conditions.'),
+    jobType: Yup.string()
+        .oneOf(
+            ['designer', 'development', 'product', 'other'],
+            'Invalid Job Type'
+        )
+        .required('Required'),
+});
 
 const SignupForm: React.FC = () => {
     const handleNameChange = (
         e: React.ChangeEvent<HTMLInputElement>,
-        formik: FormikProps<IForm>
+        setFieldValue: (
+            field: string,
+            value: string,
+            shouldValidate?: boolean | undefined
+        ) => void
     ) => {
-        formik.setFieldValue('firstName', e.target.value);
+        setFieldValue('firstName', e.target.value);
         console.log(e.target.value);
     };
 
@@ -31,37 +47,21 @@ const SignupForm: React.FC = () => {
             initialValues={{
                 firstName: '',
                 lastName: '',
-                sex: '',
+                sex: 'female',
                 music: [],
                 jobType: '',
                 email: '',
                 accept: false,
             }}
-            validationSchema={Yup.object({
-                firstName: Yup.string()
-                    .max(15, 'Must be 15 characters or less')
-                    .required('Required'),
-                lastName: Yup.string()
-                    .max(20, 'Must be 20 characters or less')
-                    .required('Required'),
-                email: Yup.string()
-                    .email('Invalid email address')
-                    .required('Required'),
-                accept: Yup.boolean()
-                    .required('Required')
-                    .oneOf([true], 'You must accept the terms and conditions.'),
-                jobType: Yup.string()
-                    .oneOf(
-                        ['designer', 'development', 'product', 'other'],
-                        'Invalid Job Type'
-                    )
-                    .required('Required'),
-            })}
-            onSubmit={(values) => {
-                alert(JSON.stringify(values, null, 2));
+            validationSchema={validationSchema}
+            onSubmit={(values, { setSubmitting }) => {
+                setTimeout(() => {
+                    alert(JSON.stringify(values, null, 2));
+                    setSubmitting(false);
+                }, 1000);
             }}
         >
-            {(formik) => (
+            {({ dirty, isValid, isSubmitting, handleReset, setFieldValue }) => (
                 <Form>
                     <Input
                         label="First Name"
@@ -69,7 +69,7 @@ const SignupForm: React.FC = () => {
                             name: 'firstName',
                             type: 'text',
                         }}
-                        onChange={(e) => handleNameChange(e, formik)}
+                        onChange={(e) => handleNameChange(e, setFieldValue)}
                     />
 
                     <Input
@@ -80,23 +80,18 @@ const SignupForm: React.FC = () => {
                         }}
                     />
                     <p>What is your sex?</p>
-                    <Radio fieldConfig={{ name: 'sex', value: 'male' }}>
-                        Male
-                    </Radio>
-                    <Radio fieldConfig={{ name: 'sex', value: 'female' }}>
-                        Female
-                    </Radio>
+                    {SEX.map(({ name, value, label, id }) => (
+                        <Radio fieldConfig={{ name, value }} key={id}>
+                            {label}
+                        </Radio>
+                    ))}
 
                     <p>What type of music do you listen?</p>
-                    <Checkbox fieldConfig={{ name: 'music', value: 'Rock' }}>
-                        Rock
-                    </Checkbox>
-                    <Checkbox fieldConfig={{ name: 'music', value: 'Classic' }}>
-                        Classic
-                    </Checkbox>
-                    <Checkbox fieldConfig={{ name: 'music', value: 'Jazz' }}>
-                        Jazz
-                    </Checkbox>
+                    {MUSIC_TYPES.map(({ name, value, label, id }) => (
+                        <Checkbox fieldConfig={{ name, value }} key={id}>
+                            {label}
+                        </Checkbox>
+                    ))}
 
                     <Select label="Job Type" fieldConfig={{ name: 'jobType' }}>
                         <option value="" disabled>
@@ -120,11 +115,15 @@ const SignupForm: React.FC = () => {
                         I accept the terms and conditions
                     </Checkbox>
 
-                    <button type="submit" onClick={formik.handleReset}>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        onClick={handleReset}
+                    >
                         Reset
                     </button>
                     <button
-                        disabled={!(formik.isValid && formik.dirty)}
+                        disabled={!(isValid && dirty) || isSubmitting}
                         type="submit"
                     >
                         Submit

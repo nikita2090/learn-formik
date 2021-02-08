@@ -22,7 +22,9 @@ const Select: React.FC<Props> = ({
                     {label}
                 </label>
             )}
-            <select {...field}>{children}</select>
+            <select {...field} className={className}>
+                {children}
+            </select>
             {meta.touched && meta.error ? (
                 <div className="error">{meta.error}</div>
             ) : null}
