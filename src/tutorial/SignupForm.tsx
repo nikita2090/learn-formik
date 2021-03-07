@@ -59,10 +59,11 @@ const SignupForm: React.FC = () => {
                 accept: false,
             }}
             validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, { setSubmitting, resetForm }) => {
                 setTimeout(() => {
                     alert(JSON.stringify(values, null, 2));
                     setSubmitting(false);
+                    resetForm();
                 }, 1000);
             }}
         >
@@ -73,7 +74,6 @@ const SignupForm: React.FC = () => {
                 isSubmitting,
                 handleReset,
                 setFieldValue,
-                // errors,
             }) => (
                 <Form>
                     <Input
