@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik, Form, FieldArray } from 'formik';
+import { Persist } from '../persist/persist';
 import * as Yup from 'yup';
 
 import Input from './components/Input';
@@ -226,6 +227,7 @@ const SignupForm: React.FC = () => {
                     >
                         Submit
                     </button>
+                    <Persist name="@Form" />
                 </Form>
             )}
         </Formik>

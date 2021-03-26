@@ -35,6 +35,7 @@
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
     "formik": "^2.2.6",
+    "lodash.debounce": "^4.0.8",
     "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -44,6 +45,7 @@
     "yup": "^0.32.8"
   },
   "devDependencies": {
+    "@types/lodash.debounce": "^4.0.6",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.3.1",
